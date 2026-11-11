@@ -1,0 +1,62 @@
+{
+  "_comment": "Tor Web Hosting - one isolated Tor v3 onion service per Pterodactyl server",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2026-11-11T00:00:00+00:00",
+  "name": "Tor Web Hosting",
+  "author": "Crackhead-gsk",
+  "description": "Nginx, PHP-FPM and a persistent Tor v3 onion service per customer container.",
+  "features": null,
+  "docker_images": {
+    "Tor Web Hosting": "ghcr.io/crackhead-gsk/pterodactyl-tor-hosting:latest"
+  },
+  "file_denylist": ".tor/hidden_service/hs_ed25519_secret_key",
+  "startup": "bash /opt/tor-hosting/start.sh",
+  "config": {
+    "files": "{}",
+    "startup": "{\"done\":\"ONION_ADDRESS=\"}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\nset -e\ncd /mnt/server\nmkdir -p public_html .tor/hidden_service .tor/data logs\nif [ ! -f public_html/index.php ] && [ ! -f public_html/index.html ]; then\ncat > public_html/index.php <<'PHP'\n<?php\necho '<h1>Tor Web Hosting</h1><p>Your onion website is running.</p>';\nPHP\nfi\nchmod 755 public_html\nchmod 700 .tor .tor/hidden_service .tor/data\nchown -R 1000:1000 /mnt/server\necho 'Tor Web Hosting files initialized.'",
+      "container": "ghcr.io/pterodactyl/installers:debian",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Web Root",
+      "description": "Website directory. This image currently supports public_html.",
+      "env_variable": "WEB_ROOT",
+      "default_value": "public_html",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|string|in:public_html",
+      "field_type": "text"
+    },
+    {
+      "name": "Tor Enabled",
+      "description": "Enable the Tor v3 onion service.",
+      "env_variable": "TOR_ENABLED",
+      "default_value": "1",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|in:0,1",
+      "field_type": "text"
+    },
+    {
+      "name": "Onion Port",
+      "description": "Virtual port exposed by the onion service.",
+      "env_variable": "ONION_PORT",
+      "default_value": "80",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|integer|in:80",
+      "field_type": "text"
+    }
+  ]
+}
