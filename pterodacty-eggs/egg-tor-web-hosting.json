@@ -12,7 +12,9 @@
   "docker_images": {
     "Tor Web Hosting": "ghcr.io/crackhead-gsk/pterodactyl-tor-hosting:latest"
   },
-  "file_denylist": ".tor/hidden_service/hs_ed25519_secret_key",
+  "file_denylist": [
+    ".tor/hidden_service/hs_ed25519_secret_key"
+  ],
   "startup": "bash /opt/tor-hosting/start.sh",
   "config": {
     "files": "{}",
