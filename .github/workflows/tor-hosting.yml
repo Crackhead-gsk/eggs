@@ -1,0 +1,35 @@
+name: Build and publish Tor Hosting image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tor-hosting/**"
+      - ".github/workflows/tor-hosting.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set lowercase image name
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/pterodactyl-tor-hosting" >> "$GITHUB_OUTPUT"
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tor-hosting
+          push: true
+          tags: ${{ steps.image.outputs.name }}:latest
