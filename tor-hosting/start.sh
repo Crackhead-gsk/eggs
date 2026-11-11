@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-HOME_DIR="${HOME:-/home/container}"
+HOME_DIR="/home/container"
 WEB_ROOT="${WEB_ROOT:-public_html}"
 TOR_ENABLED="${TOR_ENABLED:-1}"
 ONION_PORT="${ONION_PORT:-80}"
